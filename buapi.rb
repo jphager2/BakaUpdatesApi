@@ -1,7 +1,7 @@
 require 'faraday'
 require 'nokogiri'
 
-module BakaUpdate
+module BU
   class Api
     def initialize
       @root = 'http://www.mangaupdates.com'
