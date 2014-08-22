@@ -6,7 +6,7 @@ module BU
     def initialize
       @conn = Faraday.new(url: BU::ROOT) do |f|
         f.request(:url_encoded)
-        f.response(:logger)
+        # f.response(:logger) # for debugging
         f.adapter(Faraday.default_adapter)
       end
     end
@@ -25,14 +25,6 @@ module BU
         Nokogiri::HTML(@conn.post(target, post_options).body)
       end
 
-      def series_url(manga)
-        doc = manga(manga)
-        link = doc.css('a').find do |a| 
-          a[:alt] == "Series Info" && match_names(a.text, manga)
-        end  
-        link ? link[:href].sub(BU::ROOT, '') : :no_match
-      end
-
       def releases(term)
         search('/search.html', {search: term})
       end
@@ -45,6 +37,15 @@ module BU
         name = name.clone.gsub(/\W/, '')
         other = other.clone.gsub(/\W/, '')
         name.downcase == other.downcase
+      end
+
+      def series_url(manga)
+        doc = manga(manga)
+        link = doc.css('a').find do |a| 
+          a[:alt] == "Series Info" && match_names(a.text, manga)
+        end  
+        raise BU::NotFound unless link
+        link[:href].sub(BU::ROOT, '')
       end
   end
 end

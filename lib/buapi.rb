@@ -5,8 +5,8 @@ module BU
 
   ROOT = "http://www.mangaupdates.com"
 
-  def self.url_from_manga_id(id)
-    "#{ROOT}/series.html?id=#{id}" 
+  def self.series_url_from_id(id)
+    absolute_url("/series.html?id=#{id}") 
   end
 
   def self.absolute_url(url)
@@ -16,6 +16,9 @@ module BU
 
   def self.relative_url(url)
     url.gsub(ROOT, '')
+  end
+
+  class NotFound < Exception
   end
 end
 
