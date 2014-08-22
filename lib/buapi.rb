@@ -1,74 +1,21 @@
-require 'faraday'
-require 'nokogiri'
+require_relative 'bu/dashboard'
+require_relative 'bu/api'
 
 module BU
-  class Api
-    def initialize
-      @root = 'http://www.mangaupdates.com'
-      @conn = Faraday.new(url: @root) do |f|
-        f.request(:url_encoded)
-        f.response(:logger)
-        f.adapter(Faraday.default_adapter)
-      end
-    end
 
-    def series_dashboard(manga)
-      url = series_url(manga)
-      info = doc(url).css('.sMember div.sContent')
-      {
-        id:           Integer(url.sub(/.+id=/, '')), 
-        description:  series_description(info),
-        genres:       series_genres(info),
-        scanlators:   series_scanlators(info),
-      }
-    end
+  ROOT = "http://www.mangaupdates.com"
 
-    private 
-      def doc(url)
-        Nokogiri::HTML(@conn.get(url).body)
-      end
+  def self.url_from_manga_id(id)
+    "#{ROOT}/series.html?id=#{id}" 
+  end
 
-      def search(target, post_options)
-        Nokogiri::HTML(
-          @conn.post(target, post_options).body
-        )
-      end
+  def self.absolute_url(url)
+    url = ROOT + url if url =~ %r{^/}
+    url 
+  end
 
-      def releases(term)
-        search('/search.html', {search: term})
-      end
-
-      def manga(term, type: 'title')
-        search('/series.html', {stype: type, search: term})
-      end
-
-      def series_url(manga)
-        doc = manga(manga)
-        link = doc.css('a').find do |a| 
-          a[:alt] == "Series Info" && match_names(a.text, manga)
-        end  
-        link ? link[:href].sub(@root, '') : :no_match
-      end
-
-      def series_description(info)
-        info[0].text 
-      end
-
-      def series_genres(info)
-        info[14].css('a')[0..-2].map {|a| a.text}
-      end
-      
-      def series_scanlators(info)
-        info[4].css('a')
-          .select {|a| a.text != "Less..." && a.text != "More..." }
-          .map {|a| {uri: a[:href], name: a.text} }
-      end
-
-      def match_names(name, other)
-        name = name.clone.gsub(/\W/, '')
-        other = other.clone.gsub(/\W/, '')
-        name.downcase == other.downcase
-      end
+  def self.relative_url(url)
+    url.gsub(ROOT, '')
   end
 end
 
