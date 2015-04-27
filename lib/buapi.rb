@@ -1,4 +1,5 @@
 require_relative 'bu/dashboard'
+require_relative 'bu/scanlators'
 require_relative 'bu/api'
 
 module BU

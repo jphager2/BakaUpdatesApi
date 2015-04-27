@@ -16,11 +16,16 @@ module BU
       BU::Dashboard.new(url, doc(url))
     end
 
-    private 
-      def doc(url)
-        Nokogiri::HTML(@conn.get(url).body)
-      end
+    def scanlators
+      url = 'https://www.mangaupdates.com/groups.html'
+      BU::Scanlators.new(url, self)
+    end
 
+    def doc(url)
+      Nokogiri::HTML(@conn.get(url).body)
+    end
+
+    private 
       def search(target, post_options)
         Nokogiri::HTML(@conn.post(target, post_options).body)
       end
