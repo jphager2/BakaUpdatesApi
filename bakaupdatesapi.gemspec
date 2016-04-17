@@ -4,7 +4,7 @@ files.push('LICENSE')
 
 Gem::Specification.new do |s|
   s.name        = 'buapi'
-  s.version     = '0.0.4'
+  s.version     = '0.0.5'
 	s.date        = "#{Time.now.strftime("%Y-%m-%d")}"
 	s.homepage    = 'https://github.com/jphager2/bakaupdatesapi'
   s.summary     = 'Useful interface BakaUpdates'
