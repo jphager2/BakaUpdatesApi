@@ -35,7 +35,7 @@ module BU
       end
 
       def manga(term, type: 'title')
-        search('/series.html', stype: type, search: "\"#{term}\"")
+        search('/series.html', stype: type, search: term)
       end
 
       def match_names(name, other)
