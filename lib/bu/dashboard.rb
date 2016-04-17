@@ -13,10 +13,13 @@ module BU
         title:       title,
         id:          id,
         genres:      genres,
+        authors:     authors,
+        artists:     artists,
         description: description,
         scanlators:  scanlators,
       }
     end
+    alias_method :to_hash, :to_h
 
     def to_s
       to_h.each_with_object('') do |(key,value),out|
@@ -43,9 +46,16 @@ module BU
     end
 
     def genres
-      info[14].css('a')[0..-2].map {|a| a.text}
+      info[14].css('a')[0..-2].map(&:text)
+    end
+
+    def authors
+      info[18].css('a').map(&:text)
     end
     
+    def artists
+      info[19].css('a').map(&:text)
+    end
     def scanlators
       info[4].css('a')
         .select {|a| a.text != "Less..." && a.text != "More..." }
